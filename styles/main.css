@@ -23,10 +23,15 @@
     flex-wrap: wrap;
     padding: 15px;
     border: 1px solid lavender;
+
 }
 .rentProperty p{
-    display: inline-block;
+    /*display: inline-block;*/
     padding-left: 10px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis   /* clip */
 }
 
 .rentProperty:hover{

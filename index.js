@@ -11,8 +11,10 @@ class Item {
 
     getTemplate() {
         return `<div class="rentProperty trigger">
-                    <img src=${this.rest.thumb_url} alt="">
-                    <p>Keywords: ${this.rest.keywords}</p>
+                    <div>
+                        <img src=${this.rest.thumb_url} alt="">
+                        <p>Keywords: ${this.rest.keywords}</p>
+                    </div>
                     <p>Price: ${this.rest.price_formatted}</p>
                     <p>Summary: ${this.rest.summary}</p>
                 </div>`;
