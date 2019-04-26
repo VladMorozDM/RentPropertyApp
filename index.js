@@ -12,7 +12,7 @@ class Item {
     getTemplate() {
         return `<div class="rentProperty trigger">
                     <div>
-                        <img src=${this.rest.thumb_url} alt="">
+                        <img src=${this.rest.thumb_url} alt="img">
                         <p>Keywords: ${this.rest.keywords}</p>
                     </div>
                     <p>Price: ${this.rest.price_formatted}</p>
@@ -24,10 +24,11 @@ class Item {
     }
 
     handleClick(controller, event) {
-        const modal = document.querySelector(".modal");
-        modal.classList.add("show-modal");
+            const modal = document.querySelector(".modal");
+            modal.classList.add("show-modal");
 
     }
+
 }
 
 class Service{
@@ -40,7 +41,7 @@ class Service{
             city: ""
         };
     }
-      getItems (city) {
+      getHouses (city) {
         if (typeof(city) === "string") {
             this.state.city = city;
             this.addScript("https://api.nestoria."
@@ -65,10 +66,12 @@ class Service{
 class View {
     constructor(root, service = {}, factory = {}){
         this.RentItems = [];
+        this.pages = [];
+        this.city ="brighton";
         this.root = root;
         this.service = service;
         this.factory = factory;
-        this.pages = [];
+
 
     }
     refresh(){
@@ -79,10 +82,25 @@ class View {
             return new this.factory(item)});
         this.render();
     }
-    async onSubmit(city = "brighton")  {
-        await this.service.getItems(city, this);
+    onInit(){
+
         this.root.addEventListener("click", e => {
-            this.RentItems.map( item => item.handleClick(this, e) ) })
+            if(false) {
+                this.RentItems.map( item => item.handleClick(this, e) );
+            }
+            this.handleSubmit(e)
+        })
+    }
+    handleSubmit(event){
+        if(event.target.name === "searchCity" && event.target.type === "button"){
+            const newCity = document.querySelector(`#${this.root.id} input[name="${event.target.name}"][type="text"]`).value;
+            this.city = newCity.toLowerCase();
+            this.getItems();
+        }
+    }
+    getItems()  {
+        this.service.getHouses(this.city, this);
+
     }
     getTemplate(){
         const wrapper = document.createElement("div");
@@ -112,7 +130,8 @@ class View {
 
 const listData = new Service("list");
 const list = new View( document.getElementById("root"), listData, Item);
-list.onSubmit();
+list.getItems();
+list.onInit();
 console.log(list);
 
 
