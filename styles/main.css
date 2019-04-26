@@ -26,12 +26,15 @@
 
 }
 .rentProperty p{
-    /*display: inline-block;*/
     padding-left: 10px;
+}
+.rentProperty div{
+    display: flex;
+    flex-direction: row;
 
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis   /* clip */
+    text-overflow: ellipsis
 }
 
 .rentProperty:hover{
