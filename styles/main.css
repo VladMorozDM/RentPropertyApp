@@ -1,0 +1,28 @@
+.main{
+    display: flex;
+    justify-content: center;
+}
+
+.root{
+    padding: 50px;
+    border: 2px solid lavender;
+}
+
+.root .listContainer{
+    list-style-type: none;
+    padding: 0;
+}
+
+.root .list .rentProperty{
+    padding: 15px;
+    border: 1px solid lavender;
+}
+
+.root .list .rentProperty:hover{
+    background-color: whitesmoke;
+}
+
+
+
+
+
