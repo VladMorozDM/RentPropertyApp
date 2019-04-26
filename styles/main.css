@@ -1,3 +1,6 @@
+*{
+    font-family: 'Roboto', sans-serif;
+}
 .main{
     display: flex;
     justify-content: center;
@@ -9,16 +12,24 @@
 }
 
 .root .listContainer{
+    max-width: 500px;
     list-style-type: none;
     padding: 0;
 }
 
-.root .list .rentProperty{
+.rentProperty{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     padding: 15px;
     border: 1px solid lavender;
 }
+.rentProperty p{
+    display: inline-block;
+    padding-left: 10px;
+}
 
-.root .list .rentProperty:hover{
+.rentProperty:hover{
     background-color: whitesmoke;
 }
 
