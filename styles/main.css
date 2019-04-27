@@ -11,10 +11,18 @@
     border: 2px solid lavender;
 }
 
-.root .listContainer{
+ .listContainer{
     max-width: 500px;
     list-style-type: none;
     padding: 0;
+}
+.modal-content{
+    max-width: 500px;
+    list-style-type: none;
+    padding: 0;
+}
+.modal-content .listContainer input[type="button"]{
+    display: none;
 }
 
 .rentProperty{
@@ -23,6 +31,7 @@
     flex-wrap: wrap;
     padding: 15px;
     border: 1px solid lavender;
+
 
 }
 .rentProperty p{
@@ -34,7 +43,8 @@
 
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis
+    text-overflow: ellipsis;
+
 }
 
 .rentProperty:hover{
