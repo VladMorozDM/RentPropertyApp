@@ -40,7 +40,6 @@
 .rentProperty div{
     display: flex;
     flex-direction: row;
-
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
