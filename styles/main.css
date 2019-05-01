@@ -7,6 +7,8 @@
 }
 
 .root{
+    min-width: 500px;
+    min-height: 100vh;
     padding: 50px;
     border: 2px solid lavender;
 }
@@ -40,17 +42,66 @@
 .rentProperty div{
     display: flex;
     flex-direction: row;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 
 }
 
 .rentProperty:hover{
     background-color: whitesmoke;
 }
+.rentProperty .summary-add{
+    display: flex;
+    flex-direction: column;
+}
+.rentProperty .summary-add input{
+    max-width: 25%;
+}
+.rentProperty .summary-add a{
+    max-width: 20%;
+    margin-top: 10px;
+    padding: 10px 13px;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    background-color: #32CD32;
+}
+.rentProperty .summary-add a:hover{
+    background-color: #006400;
+}
+.pagination{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.pageNumber{
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 1px solid lavender;
+    background-color: #32CD32;
+    color: whitesmoke;
+}
 
-
-
-
-
+.show-more{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+}
+.show-more span{
+    width: 40%;
+    height: 30px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: whitesmoke;
+    background-color: #32CD32;
+    border: 1px solid lavender;
+    cursor: pointer;
+}

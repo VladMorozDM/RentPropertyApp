@@ -10,8 +10,9 @@
     transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
 }
 .modal-content {
-
-    position: fixed;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    position: absolute;
     top: 0%;
     left: 50%;
     transform: translate(-50%, 0);
@@ -28,9 +29,9 @@
 }
 .close-button {
     position: absolute;
-    top: 0;
-    transform: translate(50%, 50%);
+    top: -2%;
     right: 0;
+    transform: translate(0, 50%);
     width: 30px;
     line-height: 30px;
     text-align: center;
