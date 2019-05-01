@@ -98,7 +98,8 @@ class ModalView extends AbstractView {
             closeBtn.innerHTML = `<span class="close-button" key="k">&times;</span>`;
             this.root.append(closeBtn);
             this.root.classList.add("show-modal")
-        }else{
+        }
+        else{
             super.render();
             const closeBtn = document.createElement("div");
             closeBtn.innerHTML = `<span class="close-button" key="k">&times;</span>`;
@@ -168,9 +169,11 @@ class MainView extends AbstractView {
     }
     getTemplate(items = this.state.rentItems){
         const inputs =
-            `<input type="text" name="searchCity" placeholder="Your city...">
-             <input type="button" name="searchCity" value="Find">
-             <input type="button" name="favorite" value="favorite" >`;
+            `<div class="root-forms">
+                <input type="text" name="searchCity" placeholder="Your city...">
+                <input type="button" name="searchCity" value="Find">
+                <input type="button" name="favorite" value="favorite" >
+             </div>`;
         const wrapper = document.createElement("div");
         wrapper.innerHTML = inputs;
         const ul = super.getTemplate( items );
@@ -199,7 +202,7 @@ class Item {
 
     }
     getTemplate() {
-        return `<div class="rentProperty trigger" key="${this.id}">
+        return `<div class="rent-property trigger" key="${this.id}">
                     <div>
                         <img src=${this.rest.thumb_url} alt="img">
                         <p>Keywords: ${this.rest.keywords}</p>
@@ -235,6 +238,8 @@ class Item {
         if (this.isThis(event)) {
             if( event.target.name === "addToFavorite" ){
                 event.target.setAttribute("disabled", "true");
+                event.target.style.backgroundColor = "#9ACD32";
+                event.target.style.cursor = "inherit";
                 controller.state.favItems.push(this);
             }else if( event.target.tagName !== "A" ){
                 controller.showModal( this );
