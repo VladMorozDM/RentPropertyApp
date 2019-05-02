@@ -80,6 +80,10 @@
 .rent-property .summary-add input:hover{
     background-color: #9ACD32;
 }
+.rent-property .summary-add .added{
+    background-color: #9ACD32;
+    cursor: inherit;
+}
 .rent-property .summary-add a{
     max-width: 20%;
     margin-top: 10px;

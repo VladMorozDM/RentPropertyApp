@@ -156,8 +156,12 @@ class MainView extends AbstractView {
         return `${item.latitude}${item.longitude}${item.price}`
     }
     success(data){
-        this.state.rentItems = data.response.listings.map(item => {
-            return new this.factory( {id: this.getId(item), ...item} )
+        this.state.rentItems = data.response.listings.map(rentItem => {
+            return this.state.favItems.length ===0
+                ? new this.factory({id: this.getId(rentItem), addedToFav: false, ...rentItem})
+                : ( this.state.favItems.filter( favItem => favItem.id === this.getId(rentItem)).length === 0
+                    ? new this.factory({id: this.getId(rentItem), addedToFav: false, ...rentItem})
+                    : new this.factory({id: this.getId(rentItem), addedToFav: true, ...rentItem}) )
         });
         this.render();
     }
@@ -196,8 +200,11 @@ class MainView extends AbstractView {
 
 }
 class Item {
-    constructor( { id = 0, ...rest } ) {
+    constructor( { id = 0, addedToFav = false, ...rest} ) {
         this.id = id;
+        this.state = {
+            added: addedToFav
+        };
         this.rest = rest;
 
     }
@@ -213,7 +220,7 @@ class Item {
                     <div class="summary-add">
                         <p>Summary: ${this.rest.summary}</p>
                         
-                        <input type="button" name="addToFavorite" value="Add to favorite">
+                        <input type="button" ${this.state.added ? "disabled" : ""} class="${ this.state.added ? "added" : ""}" name="addToFavorite" value="Add to favorite">
                         <a href="${this.rest.lister_url}" target="_blank">Purchase</a>
                     </div>
                 </div>`;
@@ -237,17 +244,15 @@ class Item {
     handleClick(controller, event) {
         if (this.isThis(event)) {
             if( event.target.name === "addToFavorite" ){
-                event.target.setAttribute("disabled", "true");
-                event.target.style.backgroundColor = "#9ACD32";
-                event.target.style.cursor = "inherit";
                 controller.state.favItems.push(this);
-            }else if( event.target.tagName !== "A" ){
+                event.target.classList.add("added");
+            }
+            else if( event.target.tagName !== "A" ){
                 controller.showModal( this );
             }
         }
     }
 }
-
 
 const modal = new ModalView( );
 modal.onInit();
