@@ -45,60 +45,7 @@ class NestoriaService extends AbstractService{
 
 
 }
-/*
-class SwApiService extends AbstractService {
-    constructor( callbackName = 'incorrect') {
-        super(callbackName);
-    }
-    getHouses( swRelated ){
-        this.addScript( `https://swapi.co/api/${swRelated}`)
-    }
-}
-*/
-/*
-class SwApiItem {
-    constructor( { id, addedToFav = false, ...rest} ) {
-        this.state = {
-            added: addedToFav
-        };
-        this.rest = rest;
-        this.id = id;
-    }
-    getTemplate() {
-        return `<div class="rent-property trigger" key="${this.id}">
-                    <div>
 
-                        <p>Keywords: ${this.rest.keywords}</p>
-                    </div>
-                    <div>
-                        <p>Price: ${this.rest.price_formatted}</p>
-                    </div>
-                    <div class="summary-add">
-                        <p>Summary: ${this.rest.summary}</p>
-
-                        <input type="button" ${this.state.added ? "disabled" : ""} class="${ this.state.added ? "added" : ""}" name="addToFavorite" value="Add to favorite">
-                        <a href="${this.rest.lister_url}" target="_blank">Purchase</a>
-                    </div>
-                </div>`;
-    }
-    getInfo(){
-        const info = Object.keys( this.rest ).filter( (key,i) => i%3 === 0 ).reduce( (acc, key) => {
-            return acc + `<p>${key}: ${this.rest[key]}</p>`
-        }, '');
-        const wrapper = document.createElement("div");
-        wrapper.classList.add("modal-content");
-        wrapper.innerHTML = info;
-        return wrapper;
-    }
-    isThis(event){
-        let bubbled = event.target;
-        while (bubbled.parentNode && !bubbled.getAttribute("key")) {
-            bubbled = bubbled.parentNode;
-        }
-        return bubbled.getAttribute("key") === this.id;
-    }
-}
-*/
 class AbstractView {
     constructor(root = document.body, factory){
         this.root = root;
@@ -260,7 +207,6 @@ class MainView extends AbstractView {
         super.render();
         this.createModal();
     }
-
 }
 class NestoriaPropertyItem {
     constructor( { addedToFav = false, ...rest} ) {
