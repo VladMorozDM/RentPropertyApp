@@ -1,15 +1,26 @@
 /**
  * Created by vlad on 26.04.2019.
  */
-class Service{
-    constructor( callBack = 'incorrect'){
-        this.callBack = callBack;
+class AbstractService{
+    constructor( callbackName ){
+        this.callbackName = callbackName;
+    }
+    addScript(url){
+        let script = document.createElement('script');
+        script.async = true;
+        script.src = `${url}&callback=${ this.callbackName }.success`;
+        document.head.appendChild(script);
+    }
+}
+class NestoriaService extends AbstractService{
+    constructor( callbackName = 'incorrect'){
+        super( callbackName );
         this.state = {
             numberOfResults: 5,
             page: 1,
             countryUrl: "co.uk",
             country: "uk",
-            city: "london"
+            city: "york"
         };
     }
     getHouses ( city, page, numOfResults = this.state.numberOfResults ) {
@@ -25,18 +36,69 @@ class Service{
                 + "&page="
                 + this.state.page
                 + "&number_of_results="
-                + this.state.numberOfResults);
+                + this.state.numberOfResults
+            );
 
 
     }
-    addScript(url){
-        let script = document.createElement('script');
-        script.async = false;
-        script.src = `${url}&callback=${ this.callBack }.success`;
-        document.head.appendChild(script);
-    }
+
+
 
 }
+/*
+class SwApiService extends AbstractService {
+    constructor( callbackName = 'incorrect') {
+        super(callbackName);
+    }
+    getHouses( swRelated ){
+        this.addScript( `https://swapi.co/api/${swRelated}`)
+    }
+}
+*/
+/*
+class SwApiItem {
+    constructor( { id, addedToFav = false, ...rest} ) {
+        this.state = {
+            added: addedToFav
+        };
+        this.rest = rest;
+        this.id = id;
+    }
+    getTemplate() {
+        return `<div class="rent-property trigger" key="${this.id}">
+                    <div>
+
+                        <p>Keywords: ${this.rest.keywords}</p>
+                    </div>
+                    <div>
+                        <p>Price: ${this.rest.price_formatted}</p>
+                    </div>
+                    <div class="summary-add">
+                        <p>Summary: ${this.rest.summary}</p>
+
+                        <input type="button" ${this.state.added ? "disabled" : ""} class="${ this.state.added ? "added" : ""}" name="addToFavorite" value="Add to favorite">
+                        <a href="${this.rest.lister_url}" target="_blank">Purchase</a>
+                    </div>
+                </div>`;
+    }
+    getInfo(){
+        const info = Object.keys( this.rest ).filter( (key,i) => i%3 === 0 ).reduce( (acc, key) => {
+            return acc + `<p>${key}: ${this.rest[key]}</p>`
+        }, '');
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("modal-content");
+        wrapper.innerHTML = info;
+        return wrapper;
+    }
+    isThis(event){
+        let bubbled = event.target;
+        while (bubbled.parentNode && !bubbled.getAttribute("key")) {
+            bubbled = bubbled.parentNode;
+        }
+        return bubbled.getAttribute("key") === this.id;
+    }
+}
+*/
 class AbstractView {
     constructor(root = document.body, factory){
         this.root = root;
@@ -76,18 +138,17 @@ class ModalView extends AbstractView {
         modalContent.append(ul);
         return modalContent
     }
-    handleClick( event ){
+    handleClick( controller, event ){
         if( event.target.classList.contains("close-button")
             || event.target.classList.contains("modal")
                 && !event.target.classList.contains("modal-content") ){
             this.root.classList.remove("show-modal");
             document.body.classList.remove("modal-open");
+            controller.state.isModal = false;
+            controller.render();
         }else if( event.target.name === "favorite"  ){
             this.root.classList.add("show-modal");
         }
-    }
-    handleScroll(){
-
     }
     render( item ){
         if( item  ){
@@ -117,6 +178,7 @@ class MainView extends AbstractView {
             numberOfResults: 5,
             rentItems: [],
             favItems: [],
+            isModal: false,
             id: 0
         }
     }
@@ -127,9 +189,7 @@ class MainView extends AbstractView {
             this.getItems( newCity );
         }
         else if( event.target.name === "favorite" ) {
-            if(this.modalWindow.rentItems.length !== this.state.favItems.length){
-                this.modalWindow.rentItems = this.state.favItems;
-            }
+            this.modalWindow.rentItems = this.state.favItems;
             this.showModal();
         }
         else if( event.target.classList.contains("more") ) {
@@ -140,28 +200,31 @@ class MainView extends AbstractView {
             this.getItems('',  parseInt(event.target.getAttribute("data-page")) );
 
         }
+        else if( this.state.isModal ){
+            this.modalWindow.handleClick( this, event );
+            this.state.favItems.map(item => item.handleClick(this, event))
+        }
         else {
-            this.state.favItems.map(item => item.handleClick(this, event) );
-            this.state.rentItems.map(item => item.handleClick(this, event) );
+            if( !this.state.favItems.map(item => item.handleClick(this, event)).filter(Boolean).length ) {
+                this.state.rentItems.map(item => item.handleClick(this, event));
+            }
         }
     }
     showModal( item ){
         this.modalWindow.render( item );
         document.body.classList.add("modal-open");
+        this.state.isModal = true;
     }
-    getItems(city,  pageNumber, numberOfResults )  {
-        this.service.getHouses(city, pageNumber, numberOfResults);
-    }
-    getId(item){
-        return `${item.latitude}${item.longitude}${item.price}`
+    getItems(searchFor,  pageNumber, numberOfResults )  {
+        this.service.getHouses(searchFor, pageNumber, numberOfResults);
     }
     success(data){
         this.state.rentItems = data.response.listings.map(rentItem => {
             return this.state.favItems.length ===0
-                ? new this.factory({id: this.getId(rentItem), addedToFav: false, ...rentItem})
-                : ( this.state.favItems.filter( favItem => favItem.id === this.getId(rentItem)).length === 0
-                    ? new this.factory({id: this.getId(rentItem), addedToFav: false, ...rentItem})
-                    : new this.factory({id: this.getId(rentItem), addedToFav: true, ...rentItem}) )
+                ? new this.factory({ addedToFav: false, ...rentItem})
+                : ( this.state.favItems.filter( favItem => favItem.id === new this.factory(rentItem).id ).length === 0
+                    ? new this.factory({ addedToFav: false, ...rentItem})
+                    : new this.factory({ addedToFav: true, ...rentItem}) )
         });
         this.render();
     }
@@ -199,13 +262,13 @@ class MainView extends AbstractView {
     }
 
 }
-class Item {
-    constructor( { id = 0, addedToFav = false, ...rest} ) {
-        this.id = id;
+class NestoriaPropertyItem {
+    constructor( { addedToFav = false, ...rest} ) {
         this.state = {
             added: addedToFav
         };
         this.rest = rest;
+        this.id = `${this.rest.latitude}${this.rest.longitude}${this.rest.price}`;
 
     }
     getTemplate() {
@@ -219,9 +282,13 @@ class Item {
                     </div>
                     <div class="summary-add">
                         <p>Summary: ${this.rest.summary}</p>
-                        
-                        <input type="button" ${this.state.added ? "disabled" : ""} class="${ this.state.added ? "added" : ""}" name="addToFavorite" value="Add to favorite">
-                        <a href="${this.rest.lister_url}" target="_blank">Purchase</a>
+                        <div>
+                            <input 
+                                type="button" class="${ this.state.added ? "added" : ""}" 
+                                name="addToFavorite"
+                                value="${this.state.added ? "Remove from favorite" : "Add to favorite"}" />
+                            <a href="${this.rest.lister_url}" target="_blank">Purchase</a>
+                        </div>
                     </div>
                 </div>`;
     }
@@ -244,20 +311,31 @@ class Item {
     handleClick(controller, event) {
         if (this.isThis(event)) {
             if( event.target.name === "addToFavorite" ){
-                controller.state.favItems.push(this);
-                event.target.classList.add("added");
+                if( this.state.added ){
+                    controller.state.favItems = controller.state.favItems.filter( item => item.id !== this.id);
+                    event.target.classList.remove("added");
+                    event.target.value = "Add to favorite";
+                    this.state.added = false;
+                } else{
+                    controller.state.favItems.push(this);
+                    event.target.classList.add("added");
+                    event.target.value = "Remove from favorite";
+                    this.state.added = true;
+                }
+                return "It was in favorite"
             }
             else if( event.target.tagName !== "A" ){
                 controller.showModal( this );
             }
+
         }
     }
 }
 
-const modal = new ModalView( );
-modal.onInit();
-const listData = new Service("list");
-const list = new MainView(  document.getElementById("root"), listData, Item, modal  );
+
+const modal = new ModalView();
+const listData = new NestoriaService("list");
+const list = new MainView(  document.getElementById("root"), listData, NestoriaPropertyItem, modal  );
 list.getItems();
 list.onInit();
 
