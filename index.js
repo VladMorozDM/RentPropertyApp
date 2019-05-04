@@ -45,7 +45,6 @@ class NestoriaService extends AbstractService{
 
 
 }
-
 class AbstractView {
     constructor(root = document.body, factory){
         this.root = root;
@@ -127,7 +126,9 @@ class MainView extends AbstractView {
             favItems: [],
             isModal: false,
             id: 0
-        }
+        };
+        this.getItems();
+        this.onInit();
     }
     handleClick(event){
         if(event.target.name === "searchCity" && event.target.type === "button"){
@@ -282,8 +283,7 @@ class NestoriaPropertyItem {
 const modal = new ModalView();
 const listData = new NestoriaService("list");
 const list = new MainView(  document.getElementById("root"), listData, NestoriaPropertyItem, modal  );
-list.getItems();
-list.onInit();
+
 
 
 
